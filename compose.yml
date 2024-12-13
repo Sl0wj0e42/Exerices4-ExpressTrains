@@ -1,0 +1,10 @@
+services:
+  web:
+    image: node:18
+    volumes:
+      - ./backend:/usr/src/backend
+    ports:
+      - "82:8080"
+    command: sh -c "
+      chmod +x /usr/src/backend/startup.sh &&
+      /usr/src/backend/startup.sh"
