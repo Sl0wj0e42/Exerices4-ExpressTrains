@@ -19,7 +19,7 @@ app.get('/stations', async (req, res) => { // Use async for this route handler
     try {
         let url = "https://web.socem.plymouth.ac.uk/COMP3006/trains/trains";
         let response = await axios.get(url); // Await the axios call
-        let trains = response.data; // Access the response data
+        let trains = response.data.trains; // Access the response data
 
         if (!trains) {
             return res.status(500).send('No train data received from the API.');
@@ -27,9 +27,8 @@ app.get('/stations', async (req, res) => { // Use async for this route handler
 
         let rows = "";
 
-        for (let i = 0; i < trains.trains.length; i++) {
-            let train = trains.trains[i];
-            let stop = train.stops[train.stops.length - 1];
+        for (let i = 0; i < trains.length; i++) {
+            let stop = trains.stops[trains.stops.length - 1];
 
             rows += `<tr> 
                         <td>${train.departs}</td> 
@@ -38,7 +37,8 @@ app.get('/stations', async (req, res) => { // Use async for this route handler
                     </tr>`;
         };
         
-        res.render("stations", { tabTrains: rows });
+        let sendTrains = { "tabTrains": rows };
+        res.render("stations", sendTrains);
     } catch (error) {
         console.error('Error fetching train data:', error);
         res.status(500).send('Error fetching train data');

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     <head>
         <title>Station Sign</title>
@@ -15,7 +16,9 @@
                     <th>Platform</th>
                 </tr>
             </thead><!--"thead" means its the row at the top of the table-->
-            <tbody> <%= tabTrains %></tbody><!--"tbody" means fills in the table-->
+            <tbody>
+                <%- tabTrains %> <!--"=" is for strings and "-" is for raw html-->
+            </tbody><!--"tbody" means fills in the table-->
         </table>
     </body>
 </html>
