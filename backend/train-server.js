@@ -15,45 +15,32 @@ app.listen(port, () => {
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.get('/stations', (req, res) => {
-    //let request = new XMLHttpRequest();
-    
-    /*request.onreadystatechange = function() {
-        if(this.readyState == 4 && this.status == 200) {
-            let elem = document.getElementById("tabTrains");
-            let trains = JSON.parse(this.responseText);
-            let rows = "";
+app.get('/stations', async (req, res) => { // Use async for this route handler
+    try {
+        let url = "https://web.socem.plymouth.ac.uk/COMP3006/trains/trains";
+        let response = await axios.get(url); // Await the axios call
+        let trains = response.data; // Access the response data
 
-            for (let i=0; i < trains.trains.length; i++) {
-                let train = trains.trains[i];
+        if (!trains) {
+            return res.status(500).send('No train data received from the API.');
+        }
 
-                let stop = train.stops[train.stops.length-1];
+        let rows = "";
 
-               rows += "<tr>" + "<td>" + train.departs +  "</td>" + "<td>" + stop.name + "</td>" + "<td>" + train.platform + "</td>" + "</tr>";
-            }
+        for (let i = 0; i < trains.trains.length; i++) {
+            let train = trains.trains[i];
+            let stop = train.stops[train.stops.length - 1];
 
-            let sendTrains = {"tabTrains" : rows};
-            res.render("stations", sendTrains);
+            rows += `<tr> 
+                        <td>${train.departs}</td> 
+                        <td>${stop.name}</td>
+                        <td>${train.platform}</td>
+                    </tr>`;
         };
-    };*/
-
-    let url = "https://web.socem.plymouth.ac.uk/COMP3006/trains/trains";
-    let response = axios.get(url); // Use axios to fetch data
-
-    let trains = response.data;
-    //let rows = "";
-
-    /*for (let i = 0; i < trains.trains.length; i++) {
-        let train = trains.trains[i];
-        let stop = train.stops[train.stops.length - 1];
-
-        rows += "<tr>" + 
-            "<td>" + train.departs + "</td>" + 
-            "<td>" + stop.name + "</td>" + 
-            "<td>" + train.platform + "</td>" + 
-            "</tr>";
-    }*/
-
-    let sendTrains = { "tabTrains": trains };
-    res.render("stations", sendTrains);
+        
+        res.render("stations", { tabTrains: rows });
+    } catch (error) {
+        console.error('Error fetching train data:', error);
+        res.status(500).send('Error fetching train data');
+    }
 });
